@@ -1,0 +1,247 @@
+#Install the downloader package to download and unzip the zip file
+
+install.packages("downloader")
+
+#Download and decompress the file
+
+fileURL<-"https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+
+download(fileURL, dest="/Users/DavidFernandez/CleaningDataProject/Project.zip", mode="wb")
+
+unzip("Project.zip", exdir ="/Users/DavidFernandez/CleaningDataProject" )
+
+#Change working directory to join test data
+
+setwd("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/test")
+
+#Post the data in different tables and then join them
+
+library(dplyr)
+
+X_test<-read.table("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/test/X_test.txt")
+
+y_test<-read.table("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/test/y_test.txt")
+
+subject_test<-read.table("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/test/subject_test.txt")
+
+#Join the three tables: 1) subject_test, 2) y_test, 3) X_test
+
+Test_results_Test<-cbind(subject_test,y_test,X_test)
+
+#I repeat the same steps for the data corresponding to train
+
+X_train<-read.table("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/train/X_train.txt")
+
+y_train<-read.table("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/train/y_train.txt")
+
+subject_train<-read.table("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/train/subject_train.txt")
+
+#I join the three tables: 1) subject_train, 2) y_train, 3) X_train
+
+Test_results_Train<-cbind(subject_train,y_train,X_train)
+
+#Now join the two tables Test_Result_Train and Test_result_Test together
+
+run_analysis<-rbind(Test_results_Train,Test_results_Test)
+
+##################### SECOND PART ############################
+
+#In the features.txt file I identify the columns that have the word mean ()
+#and std()
+
+features<-read.table("/Users/DavidFernandez/CleaningDataProject/UCI HAR Dataset/features.txt")
+
+Mean_Col<-grep("mean()",features$V2)
+
+#It also includes the average frequency; I have included it because it is also
+#a measure that has been taken
+
+Std_Col<-grep("std()",features$V2)
+
+#I create a vector with 79 positions to indicate in the columns
+#that I have to keep
+
+conservar<-rep(0,563)
+
+for(i in 1:563){
+
+        for(j in 1:46){
+                if (is.na(match(Mean_Col[j],i))==FALSE) conservar[i]<-i
+        }
+        
+        for(k in 1:33){
+                if (is.na(match(Std_Col[k],i))==FALSE) conservar[i]<-i
+        }
+}
+
+rm(i,j,k)
+
+conservar_v2<-rep(0,79)
+
+j<-1
+
+#I join in the same vector Mean_col and Std_col
+
+for(i in 1:563){
+        if(conservar[i]!=0){
+                conservar_v2[j]<-conservar[i]
+                j<-j+1
+        }
+}
+
+rm(i,j)
+
+#Having added two columns you have to move the values 2 times
+
+conservar_v3<-rep(0,81)
+conservar_v3[1]<-1
+conservar_v3[2]<-2
+for(i in 3:81){
+        conservar_v3[i]<-conservar_v2[i-2]+2
+}
+
+rm(i)
+#I now select the columns I need
+
+run_analysis_v2<-subset(run_analysis,select=conservar_v3)
+
+################# THIRD PART ##############################
+
+#I will change descriptive numbers by name to
+#for column 2. I will use the same names as in 
+#the txt
+
+for(i in 1:nrow(run_analysis_v2) ){
+        if(run_analysis_v2[i,2]==1) run_analysis_v2[i,2]<-"WALKING"
+        if(run_analysis_v2[i,2]==2) run_analysis_v2[i,2]<-"WALKING_UPSTAIRS"
+        if(run_analysis_v2[i,2]==3) run_analysis_v2[i,2]<-"WALKING_DOWNSTAIRS"
+        if(run_analysis_v2[i,2]==4) run_analysis_v2[i,2]<-"SITTING"
+        if(run_analysis_v2[i,2]==5) run_analysis_v2[i,2]<-"STANDING"
+        if(run_analysis_v2[i,2]==6) run_analysis_v2[i,2]<-"LAYING"
+}
+
+################## FOURTH PART ############################
+
+run_analysis_v2<-rename(run_analysis_v2,Subject_Number=V1)
+
+run_analysis_v2<-rename(run_analysis_v2,Activity=V1.1)
+
+d<-toString(features[1,2])
+
+run_analysis_v2<-rename(run_analysis_v2,tBodyAccmeanX=d)
+
+rm(i)
+
+#I condition the feature.txt tags
+features_v2<-rep(0,nrow(features))
+for(i in 1:nrow(features)){
+        features[i,2]<-gsub("-","",features[i,2])
+}
+for(i in 1:length(features)){
+        features[i,2]<-sub("()","",features[i,2],fixed = TRUE)
+}
+
+#I use the features_v2 tags to name the variables
+rm(a)
+label<-names(run_analysis_v2)
+label_v2<-rep("0",79)
+for(i in 1:561){
+        for(j in 1:79){
+                if(conservar_v2[j]==i){
+                       
+                        label_v2[j]<-features_v2[i]
+                }
+        }
+}
+
+
+run_analysis_v2<-tbl_df(run_analysis_v2)
+
+for(i in 2:79){
+        a<-i+2
+        f<-as.symbol(label_v2[i])
+        colnames(run_analysis_v2)[a]<-label_v2[i]
+}
+
+##################### FIFTH PART ######################
+## I create 30 tables where I collect the information of each subject ##
+for(k in 1:30){
+mean_run_analysis_v2_k<-filter(mean_run_analysis,Subject_Number==k)
+
+#Walking
+
+mean_run_analysis_k_WALKING<-filter(mean_run_analysis_v2_k,Activity=="WALKING")
+mean_Walking_k<-map_dbl(mean_run_analysis_k_WALKING,mean)
+
+#Walking_Upstairs
+mean_run_analysis_k_WALKING_UPSTAIRS<-filter(mean_run_analysis_v2_k,Activity=="WALKING_UPSTAIRS")
+mean_Walking_Upstairs_k<-map_dbl(mean_run_analysis_k_WALKING_UPSTAIRS,mean)
+
+#Walking_Downstairs
+mean_run_analysis_k_WALKING_DOWNSTAIRS<-filter(mean_run_analysis_v2_k,Activity=="WALKING_DOWNSTAIRS")
+mean_Walking_Downstairs_k<-map_dbl(mean_run_analysis_k_WALKING_DOWNSTAIRS,mean)
+
+#Sitting
+mean_run_analysis_k_SITTING<-filter(mean_run_analysis_v2_k,Activity=="SITTING")
+mean_Walking_Sitting_k<-map_dbl(mean_run_analysis_k_SITTING,mean)
+
+#Standing
+mean_run_analysis_k_STANDING<-filter(mean_run_analysis_v2_k,Activity=="STANDING")
+mean_Walking_STANDING_k<-map_dbl(mean_run_analysis_k_STANDING,mean)
+
+#Laying
+mean_run_analysis_k_LAYING<-filter(mean_run_analysis_v2_k,Activity=="LAYING")
+mean_Walking_Laying_k<-map_dbl(mean_run_analysis_k_LAYING,mean)
+
+Subject_k<-run_analysis_v2
+
+for(i in 1:nrow(Subject_k)){
+        for(j in 1:ncol(Subject_k)) Subject_k[i,j]<-0
+}
+
+
+Subject_k[1,2]<-"WALKING"
+Subject_k[2,2]<-"WALKING_UPSTAIRS"
+Subject_k[3,2]<-"WALKING_DOWNSTAIRS"
+Subject_k[4,2]<-"SITTING"
+Subject_k[5,2]<-"STANDING"
+Subject_k[6,2]<-"LAYING"
+
+for(i in 1:6) Subject_k[i,1]<-k
+
+for(j in 3:81){Subject_k[1,j]<-mean_Walking_k[j]}
+rm(j)
+for(j in 3:81){Subject_k[2,j]<-mean_Walking_Upstairs_k[j]}
+rm(j)
+for(j in 3:81){Subject_k[3,j]<-mean_Walking_Downstairs_k[j]}
+rm(j)
+for(j in 3:81){Subject_k[4,j]<-mean_Walking_Sitting_k[j]}
+rm(j)
+for(j in 3:81){Subject_k[5,j]<-mean_Walking_STANDING_k[j]}
+rm(j)
+for(j in 3:81){Subject_k[6,j]<-mean_Walking_Laying_k[j]}
+
+nam<-paste("Subject_",k,sep = "")
+
+assign(nam,filter(Subject_k,Subject_Number!=0))
+
+#To access each table and check that the loop
+#evolves correctly
+
+print(nam)
+print(get(paste("Subject_",k,sep = "")))
+}
+
+#Now I join all the tables in one
+
+Final_mean_run_analysis<-rbind(Subject_1,Subject_2)
+
+for (i in 3:30){
+        nam2<-paste("Subject_",i,sep = "")
+        Final_mean_run_analysis<-rbind(Final_mean_run_analysis,get(nam2))
+}
+
+#I finally write a txt file
+
+write.table(Final_mean_run_analysis,file = "Run_analysis_DFJ",row.names = FALSE)
+
