@@ -1,6 +1,6 @@
 # Getting-Cleaning-Data-Course-Project
 
-The code that appears in the file run_analysis allows to obtain a table where the average of each variable for each activity and each subject is collected. Just run the script and create a txt file with this table in the working directory.( Here is a code to read the txt file: 
+The code that appears in the file run_analysis allows to obtain a table where the average of each variable for each activity and each subject is collected. Just run the script and it will create a txt file with this table in the working directory.( Here is a code to read the txt file: 
 
 data <- read.table(file_path, header = TRUE) 
     View(data)
