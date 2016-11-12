@@ -122,23 +122,20 @@ for(i in 1:nrow(run_analysis_v2) ){
 
 ################## FOURTH PART ############################
 
+
 run_analysis_v2<-rename(run_analysis_v2,Subject_Number=V1)
 
 run_analysis_v2<-rename(run_analysis_v2,Activity=V1.1)
 
-d<-toString(features[1,2])
-
-run_analysis_v2<-rename(run_analysis_v2,tBodyAccmeanX=d)
-
-rm(i)
+run_analysis_v2<-rename(run_analysis_v2,tBodyAccmeanX=V1.2)
 
 #I condition the feature.txt tags
 features_v2<-rep(0,nrow(features))
 for(i in 1:nrow(features)){
-        features[i,2]<-gsub("-","",features[i,2])
+        features_v2[i]<-gsub("-","",features[i,2])
 }
-for(i in 1:length(features)){
-        features[i,2]<-sub("()","",features[i,2],fixed = TRUE)
+for(i in 1:nrow(features)){
+        features_v2[i]<-sub("()","",features[i,2],fixed = TRUE)
 }
 
 #I use the features_v2 tags to name the variables
@@ -153,7 +150,6 @@ for(i in 1:561){
                 }
         }
 }
-
 
 run_analysis_v2<-tbl_df(run_analysis_v2)
 
