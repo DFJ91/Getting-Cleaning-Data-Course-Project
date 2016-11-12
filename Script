@@ -132,10 +132,10 @@ run_analysis_v2<-rename(run_analysis_v2,tBodyAccmeanX=V1.2)
 #I condition the feature.txt tags
 features_v2<-rep(0,nrow(features))
 for(i in 1:nrow(features)){
-        features_v2[i]<-gsub("-","",features[i,2])
+        features_v2[i]<-gsub("-","",features[i,2],fixed = TRUE)
 }
 for(i in 1:nrow(features)){
-        features_v2[i]<-sub("()","",features[i,2],fixed = TRUE)
+        features_v2[i]<-sub("()","",features_v2[i],fixed = TRUE)
 }
 
 #I use the features_v2 tags to name the variables
