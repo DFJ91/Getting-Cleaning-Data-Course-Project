@@ -1,1 +1,78 @@
 
+X_test; Is a dataframe with the information of the X_test.txt file 
+
+y_test; Is a dataframe with the information of the Y_test.txt file
+
+subject_test; Is a dataframe with the information of the subject_test.txt file
+
+Test_results_Test; Is a dataframe where the first column are the values of subject_test, the second
+                   column are the values of y_test and the rest of the columns are the values of X_test 
+                   
+X_train; Is a dataframe with the information of the X_train.txt file 
+
+y_train; Is a dataframe with the information of the Y_train.txt file
+
+subject_train; Is a dataframe with the information of the subject_train.txt file
+
+Test_results_Train; Is a dataframe where the first column are the values of subject_train, the second
+                   column are the values of y_train and the rest of the columns are the values of X_train
+                   
+run_analysis; Is a dataframe where I merged the Test_results_Test dataframe and the Test_results_Train dataframe
+
+features; Is a dataframe with the information of the feaures.txt file
+
+Mean_col; Is an integer vector where I identified the rows where the word "mean()" can be found in the features variable
+
+Std_Col; Is an integer vector where I identified the rows where the word "std()" can be found in the features variable
+                   
+conservar; Is a numeric vector where I identified the columns that I need to keep from the run_analysis dataframe
+
+conservar_v2; Is a numeric vector where I place in order the columns that I must finally keep from the run_analysis dataframe
+
+conservar_v3; Is a numeric vector where I  modify the values of the variable conservar_v2. I sum 2 units to all the values 
+              in that variable
+              
+run_analysis_v2; Is a dataframe where I subset the run_analysis dataframe to keep only the columns I need
+
+features_v2; Is a character vector where I save the values of the variable features but without the characters "-" and "()"
+
+label; Is a character vector where I save the names of the columns of the run_analysis_v2 dataframe
+
+label_v2; Is a character vector where I save the names of the columns for run_analysis_v2
+
+mean_run_analysis; Is a dataframe with the same values as run_analysis_v2
+
+mean_run_analysis_k_WALKING; Is a dataframe where I save all the values of the different variables for the activity Walking
+                             and the subject k
+                          
+mean_run_analysis_k_WALKING_UPSTAIRS; Is a dataframe where I save all the values of the different variables for the activity 
+                                      Walking_Upstairs and the subject k
+                                      
+mean_run_analysis_k_WALKING_DOWNSTAIRS; Is a dataframe where I save all the values of the different variables for the activity 
+                                      Walking_Downstairs and the subject k
+                                      
+mean_run_analysis_k_SITTING; Is a dataframe where I save all the values of the different variables for the activity 
+                             Sitting and the subject k
+                                                                   
+mean_run_analysis_k_STANDING; Is a dataframe where I save all the values of the different variables for the activity 
+                             Standing and the subject k
+                                                                                                
+mean_run_analysis_k_LAYING; Is a dataframe where I save all the values of the different variables for the activity 
+                             Laying and the subject k
+                             
+Subject_1; Is a dataframe where I save the mean values of the variables for each activity for subject 1
+                             
+Subject_2; Is a dataframe where I save the mean values of the variables for each activity for subject 2
+
+Subject_3; Is a dataframe where I save the mean values of the variables for each activity for subject 3
+.
+.
+.
+Subject_30; Is a dataframe where I save the mean values of the variables for each activity for subject 30
+
+Final_mean_run_analysis; Is a dataframe where I merge all the dataframes from Subject 1 to 30 
+
+
+
+
+
